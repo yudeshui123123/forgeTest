@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=no" />
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/style.min.css"
+        type="text/css">
+    <script src="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/viewer3D.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #forgeViewer {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            background-color: #F0F8FF;
+        }
+
+        #MyAwesomeLockButton,
+        #MyAwesomeUnlockButton {
+            position: relative;
+            left: 600px;
+            z-index: 1;
+        }
+
+        /**
+                *选择计数器css样式
+                */
+        .my-custom-ui {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 5;
+            margin: .3em;
+            padding: .3em;
+            font-size: 3em;
+            font-family: sans-serif;
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 8px;
+        }
+
+        .my-custom-ui span {
+            color: red;
+        }
+
+        /**
+                *两个自定义工具的样式
+                */
+        .show-env-bg-button {
+            background: red;
+        }
+
+        .hide-env-bg-button {
+            background: blue;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="forgeViewer"></div>
+    <div id="cece"></div>
+    <!--添加的扩展程序的点击按钮-->
+    <!-- <button id="MyAwesomeLockButton">Lock it!</button>
+        <button id="MyAwesomeUnlockButton">Unlock it!</button> -->
+
+    <!--选择计数器-->
+    <!-- <div class="my-custom-ui">
+            <div>Items selected: <span id="MySelectionValue">0</span></div>
+            <div>Navigation tool: <span id="MyToolValue">Unknown</span></div>
+        <div> -->
+            <script src="https://code.jquery.com/jquery-3.3.1.min.js">
+</script>
+    <script>
+        //添加查看器到html
+        var viewer;
+        var options = {
+            env: 'AutodeskProduction',
+            api: 'derivativeV2',  // for models uploaded to EMEA change this option to 'derivativeV2_EU'
+            getAccessToken: function (onTokenReady) {
+                var token = 'eyJhbGciOiJIUzI1NiIsImtpZCI6Imp3dF9zeW1tZXRyaWNfa2V5In0.eyJjbGllbnRfaWQiOiJ6R05ranNjZTFUR3d5dGhJamE4M0hXV2ZQRmNYdUE3RiIsImV4cCI6MTU2ODk0NDEzMiwic2NvcGUiOlsiZGF0YTpyZWFkIiwiZGF0YTp3cml0ZSIsImJ1Y2tldDpjcmVhdGUiLCJidWNrZXQ6cmVhZCJdLCJhdWQiOiJodHRwczovL2F1dG9kZXNrLmNvbS9hdWQvand0ZXhwNjAiLCJqdGkiOiI4dVpsQWNqaUQxdjRDWXlyQzZZcUtESXBsNzc4SVp1T0xrYUZuSGJJU1lTclFJRjQ5eVJFNDdRalNiOWVWMDROIn0.srUGRKC6mtRd3NJZr2BPP3wuUAimVC2dPEDqbFdQw6Q';
+                var timeInSeconds = 3600; // Use value provided by Forge Authentication (OAuth) API
+                onTokenReady(token, timeInSeconds);
+            }
+        };
+
+        //初始化查看器
+        Autodesk.Viewing.Initializer(options, function () {
+
+            var htmlDiv = document.getElementById('forgeViewer');
+            var config3d = {
+                extensions : ['ToolbarExtension']
+            };
+            viewer = new Autodesk.Viewing.GuiViewer3D(htmlDiv,config3d);
+            
+            var startedCode = viewer.start();
+            
+            //验证浏览器是否支持webGL
+            if (startedCode > 0) {
+                console.error('您的浏览器不支持WebGL');
+                return;
+            }
+            var modelOptions = {
+                 applyRefPoint: true,
+                 globalOffset:{
+                     x:0,
+                     y:0,
+                     z:0
+                },
+                 isAEC: true
+        };
+
+         viewer.loadModel('urn:adsk.viewing:fs.file:dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6eGlhb2RvbmctcGVyc2lzdGVudC1idWNrZXQtdGVzdDAyL3N1c2hlX2ppYW56aHUucnZ0/output/Resource/三维视图/3D/3D.svf',modelOptions);
+         
+        //宿舍结构
+        viewer.loadModel( 'urn:adsk.viewing:fs.file:dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6eGlhb2RvbmctcGVyc2lzdGVudC1idWNrZXQtdGVzdDAyL3N1c2hlX2ppZWdvdS5ydnQ/output/Resource/三维视图/3D/3D.svf',modelOptions);
+            //宿舍设备
+        viewer.loadModel('urn:adsk.viewing:fs.file:dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6eGlhb2RvbmctcGVyc2lzdGVudC1idWNrZXQtdGVzdDAyL3N1c2hlX3NoZWJlaS5ydnQ/output/Resource/三维视图/3D/3D.svf',modelOptions);
+           console.log('您的浏览器支持webGL');
+
+        });
+        
+        // var htmlDiv = document.getElementById('forgeViewer');
+        // viewer = new Autodesk.Viewing.GuiViewer3D(htmlDiv);
+        // viewer.start();
+        //加载列表中的模型，这个id代表加载桶中的哪一个模型    //urn:dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6eGlhb2RvbmctcGVyc2lzdGVudC1idWNrZXQtdGVzdDAyL215Ymllc2h1LnJ2dA==
+         //var documentId = 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6eGlhb2RvbmctcGVyc2lzdGVudC1idWNrZXQtdGVzdDAyL3N1c2hlX2ppYW56aHUucnZ0';
+         //Autodesk.Viewing.Document.load(documentId, onDocumentLoadSuccess, onDocumentLoadFailure);
+
+          //转换成中文测试
+        Autodesk.Viewing.i18n.setLng('zh-HANS');
+        Autodesk.Viewing.i18n.localize();
+        
+
+        function onDocumentLoadSuccess(viewerDocument) {
+            //这是加载的整个模型
+            // var defaultModel = viewerDocument.getRoot().getDefaultGeometry();
+
+            // viewer.loadDocumentNode(viewerDocument, defaultModel);
+
+            // var modelOptions = {
+            //     applyRefPoint: true,
+            //     globalOffset:viewer.model.getData().globalOffset,
+            //     isAEC: true
+            // };
+            
+       
+
+            
+
+            //这是加载的列表中的第一个模型
+            // var viewables = viewerDocument.getRoot().search({'type':'geometry'});
+            // viewer.loadDocumentNode(viewerDocument, viewables[3]);
+
+            
+        }
+
+
+        function onDocumentLoadFailure() {
+            console.error('Failed fetching Forge manifest');
+        }
+
+
+
+
+
+
+
+
+
+
+        
+        //添加自定义工具栏
+        //1、首先将其实现为扩展
+        function ToolbarExtension(viewer, options) {
+            Autodesk.Viewing.Extension.call(this, viewer, options);
+        }
+
+        ToolbarExtension.prototype = Object.create(Autodesk.Viewing.Extension.prototype);
+        ToolbarExtension.prototype.constructor = ToolbarExtension;
+
+        ToolbarExtension.prototype.load = function() {
+            // Set background environment to "Infinity Pool"
+            // and make sure the environment background texture is visible
+            this.viewer.setLightPreset(6);
+            this.viewer.setEnvMapBackground(true);
+
+            // Ensure the model is centered
+            this.viewer.fitToView();
+
+            return true;
+        };
+
+        ToolbarExtension.prototype.unload = function() {
+            if (this.subToolbar) {
+                this.viewer.toolbar.removeControl(this.subToolbar);
+                this.subToolbar = null;
+            }
+        };
+
+        Autodesk.Viewing.theExtensionManager.registerExtension('ToolbarExtension', ToolbarExtension);
+        ToolbarExtension.prototype.onToolbarCreated = function(toolbar) {
+            // alert('TODO: customize Viewer toolbar');
+
+            var viewer = this.viewer;
+
+            // Button 1
+            var button1 = new Autodesk.Viewing.UI.Button('我是来测试的');
+            button1.onClick = function(e) {
+                viewer.setEnvMapBackground(true);
+            };
+            button1.addClass('show-env-bg-button');
+            button1.setToolTip('我就是来测试的');
+
+            // SubToolbar
+            this.subToolbar = new Autodesk.Viewing.UI.ControlGroup('我的自定义工具栏');
+            this.subToolbar.addControl(button1);
+            toolbar.addControl(this.subToolbar);
+        };
+       
+
+    </script>
+    <!-- <script src="my-test-extension.js"></script>
+        <script src="my-test2.js"></script> -->
+</body>
+
+</html>
